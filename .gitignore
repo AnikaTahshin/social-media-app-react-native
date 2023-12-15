@@ -2,12 +2,13 @@
 
 # dependencies
 node_modules/
-.Constants
+
+./src/Constants/constants
 # Expo
 .expo/
 dist/
 web-build/
-
+.env
 # Native
 *.orig.*
 *.jks

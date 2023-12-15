@@ -6,13 +6,22 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-const HomeScreen = ({ navigation }) => {
+import { Image } from "react-native";
+import { auth } from "../../firebase";
+import Toast from "react-native-simple-toast";
+import { useNavigation } from "@react-navigation/native";
+import { DataContext } from "./ContextProvider";
+
+const HomeScreen = () => {
+  const navigation = useNavigation();
   const [post, setPost] = useState([]);
+  const { detailsPost, setDetailsPost } = useContext(DataContext);
+
   const fetchData = () => {
     fetch("https://jsonplaceholder.typicode.com/posts", {
       method: "GET",
@@ -23,17 +32,27 @@ const HomeScreen = ({ navigation }) => {
     })
       .then((res) => res.json())
       .then((response) => {
-        console.log("see response", response);
+        console.log("see response", response.slice(0, 10));
         setPost(response);
       });
   };
 
-  const [details, setDetails] = useState({});
+  // const [details, setDetails] = useState({});
+
+  const handleSignOut = () => {
+    signOut(auth)
+      .then(() => {
+        Toast.show("Log out successfully");
+      })
+      .catch((error) => {
+        // An error happened.
+      });
+  };
 
   const handleDetails = (item) => {
     console.log("the item", item);
     // https://jsonplaceholder.typicode.com/posts/1
-    fetch(`https://jsonplaceholder.typicode.com/posts/${item?.id}`, {
+    fetch(`https://jsonplaceholder.typicode.com/posts/${item.id}`, {
       method: "GET",
       // headers: {
       //   Accept: "application/json",
@@ -43,32 +62,49 @@ const HomeScreen = ({ navigation }) => {
       .then((res) => res.json())
       .then((response) => {
         console.log("details response", response);
-
-        setDetails(response);
+        setDetailsPost(response);
+        navigation.navigate("DetailsScreen");
       });
   };
   useEffect(() => {
-    // fetchData();
+    fetchData();
   }, []);
 
   return (
     <SafeAreaView>
-      <ScrollView>
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+      <View style={[styles.topDiv]}>
+        <Text
+          style={{
+            textAlign: "center",
+            fontSize: 20,
+            fontWeight: "bold",
+            marginLeft: 140,
+          }}
         >
-          {post?.map((item) => {
-            return (
-              <TouchableOpacity onPress={handleDetails(item)}>
+          Home
+        </Text>
+
+        <TouchableOpacity>
+          <Text>Log out</Text>
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView>
+        {post?.map((item) => {
+          return (
+            <>
+              <TouchableOpacity key={item.id} onPress={handleDetails(item)}>
                 <View style={styles.container}>
-                  <Text key={item.id} style={{ color: "#000" }}>
-                    {item.title}
-                  </Text>
+                  <View style={styles.postContainer}>
+                    <View>
+                      <Text style={{ color: "#000" }}>{item?.title}</Text>
+                    </View>
+                  </View>
                 </View>
               </TouchableOpacity>
-            );
-          })}
-        </View>
+            </>
+          );
+        })}
       </ScrollView>
     </SafeAreaView>
   );
@@ -78,9 +114,33 @@ export default HomeScreen;
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
     marginVertical: 10,
-    backgroundColor: "orange",
-    width: wp("90%"),
-    height: hp(20),
+    backgroundColor: "gray",
+    marginHorizontal: 10,
+    height: 100,
+    // borderBlockColor: "red",
+  },
+
+  postContainer: {
+    // backgroundColor: "neon",
+  },
+
+  topDiv: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    // marginVertical: 10,
+    // marginHorizontal: 10,
+    padding: 20,
+    backgroundColor: "#7FCCD6",
+  },
+
+  shadowProp: {
+    elevation: 8,
+    backgroundColor: "white",
   },
 });

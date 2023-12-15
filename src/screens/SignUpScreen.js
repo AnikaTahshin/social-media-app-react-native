@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -17,15 +17,17 @@ import {
 import { auth } from "../../firebase";
 import Toast from "react-native-simple-toast";
 
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
+import { DataContext } from "./ContextProvider";
+
 const SignUpScreen = () => {
+  const { userDetails } = useContext(DataContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  console.log("userDetailsuserDetailsuserDetails", userDetails.name);
 
   const navigation = useNavigation();
   const handleSignUp = () => {
@@ -120,6 +122,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   buttonContainer: {
-    backgroundColor: "green",
+    backgroundColor: "white",
+    padding: 5,
   },
 });
