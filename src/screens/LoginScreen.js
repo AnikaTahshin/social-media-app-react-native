@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -20,10 +20,13 @@ import {
 } from "firebase/auth";
 import { auth } from "../../firebase";
 import { useNavigation } from "@react-navigation/native";
+import { DataContext } from "./ContextProvider";
+import { Image } from "react-native";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const navigation = useNavigation();
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -33,69 +36,57 @@ const LoginScreen = () => {
     });
     return unsubscribe;
   }, []);
-
+  const { userDetails, setUserDetails } = useContext(DataContext);
   const handleLogin = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredentials) => {
         const user = userCredentials.user;
-        console.log("checking user", user.email);
+
+        setUserDetails(user);
         navigation.navigate("Home", { screen: "Home" });
       })
       .catch((error) => alert(error.message));
   };
+  console.log("userDetails", userDetails?.email);
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar animated={true} backgroundColor="#000" />
+      <View style={styles.hero}>
+        <View style={styles.inputContainer}>
+          <Image
+            style={{
+              height: hp("10%"),
+              width: wp("20%"),
+              marginVertical: 10,
+              borderRadius: 15,
+            }}
+            source={require("../assets/images/pen.png")}
+          />
+          <TextInput
+            placeholder="Email"
+            value={email}
+            onChangeText={(text) => setEmail(text)}
+            style={styles.input}
+          />
+          <TextInput
+            placeholder="Password"
+            value={password}
+            onChangeText={(text) => setPassword(text)}
+            style={styles.input}
+          />
+          {/* <TextInput
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            onChangeText={(text) => setConfirmPassword(text)}
+            style={styles.input}
+          /> */}
 
-      {/* FOR EMAIL AND PASSWORD TO LOGIN  */}
-      <View style={styles.inputContainer}>
-        <TextInput
-          placeholder="Email"
-          value={email}
-          onChangeText={(text) => setEmail(text)}
-          style={styles.input}
-        />
-
-        <TextInput
-          placeholder="Password"
-          value={password}
-          onChangeText={(text) => setPassword(text)}
-          style={styles.input}
-          secureTextEntry
-        />
-      </View>
-
-      {/* LOGIN AND REGISTER BUTTON  */}
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={handleLogin} style={[styles.button]}>
-          <Text style={styles.buttonTxt}>Login</Text>
-        </TouchableOpacity>
-
-        <View>
-          {/* Your other login screen components */}
-          <Text>
-            Do not have an account?
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate("Signup", { screen: "Signup" })
-              }
-            >
-              {/* <Text style={styles.buttonOutlineTxt}>Register</Text> */}
-              <Text>Register</Text>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity onPress={handleLogin}>
+              <Text>Login</Text>
             </TouchableOpacity>
-          </Text>
+          </View>
         </View>
-        {/* 
-        <Text>
-          Do not have account?
-          <TouchableOpacity
-            onPress={navigation.navigate("signup")}
-            //   onPress={handleSignUp}
-            //   style={[styles.button, styles.buttonOutline]}
-          >
-            <Text style={styles.buttonOutlineTxt}>Register</Text>
-          </TouchableOpacity>
-        </Text> */}
       </View>
     </SafeAreaView>
   );
@@ -104,44 +95,84 @@ const LoginScreen = () => {
 export default LoginScreen;
 
 const styles = StyleSheet.create({
-  container: {
+  hero: {
+    backgroundColor: "#fff",
+    alignItems: "center",
+    height: hp("100%"),
+  },
+  inputContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    width: wp("100%"),
+    marginVertical: 80,
+    width: wp("80%"),
+    backgroundColor: "#7FCCD6",
+    borderRadius: 10,
   },
 
-  inputContainer: {
-    width: wp("80%"),
-  },
   input: {
-    backgroundColor: "white",
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    borderRadius: 10,
-    marginTop: 5,
+    backgroundColor: "#fff",
+    width: wp("60%"),
+    padding: 8,
+    marginVertical: 5,
+    borderRadius: 5,
   },
   buttonContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 40,
-  },
-
-  button: {
-    backgroundColor: "blue",
-    width: wp("60%"),
-    padding: 15,
-    borderRadius: 10,
-  },
-  buttonOutline: {
     backgroundColor: "white",
-    marginTop: 10,
-    borderColor: "blue",
-    borderWidth: 2,
-  },
-  buttonTxt: { textAlign: "center", color: "white", fontSize: hp(2) },
-  buttonOutlineTxt: {
-    textAlign: "center",
-    fontSize: hp(2),
+    padding: 5,
   },
 });
+
+{
+  /* <View style={styles.main}>
+        
+        <View style={styles.inputContainer}>
+          <Image
+            style={{
+              height: hp("10%"),
+              width: wp("20%"),
+              marginVertical: 10,
+              borderRadius: 15,
+            }}
+            source={require("../assets/images/pen.png")}
+          />
+          <TextInput
+            placeholder="Email"
+            value={email}
+            onChangeText={(text) => setEmail(text)}
+            style={styles.input}
+          />
+
+          <TextInput
+            placeholder="Password"
+            value={password}
+            onChangeText={(text) => setPassword(text)}
+            style={styles.input}
+            secureTextEntry
+          />
+        </View>
+
+      
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity onPress={handleLogin} style={[styles.button]}>
+            <Text style={styles.buttonTxt}>Login</Text>
+          </TouchableOpacity>
+
+          <View>
+           
+            <Text>
+              Do not have an account?
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate("Signup", { screen: "Signup" })
+                }
+              >
+               
+                <Text>Register</Text>
+              </TouchableOpacity>
+            </Text>
+          </View>
+          
+        </View>
+      </View> */
+}

@@ -5,18 +5,19 @@ import HomeScreen from "../screens/HomeScreen";
 import SignUpScreen from "../screens/SignUpScreen";
 
 import Profile from "../screens/Profile";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+// import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import DetailsScreen from "../screens/DetailsScreen";
 
-const Tab = createBottomTabNavigator();
+// const Tab = createBottomTabNavigator();
 
-function MyTabs() {
-  return (
-    <Tab.Navigator>
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Profile" component={Profile} />
-    </Tab.Navigator>
-  );
-}
+// function MyTabs() {
+//   return (
+//     <Tab.Navigator>
+//       <Tab.Screen name="Home" component={HomeScreen} />
+//       <Tab.Screen name="Profile" component={Profile} />
+//     </Tab.Navigator>
+//   );
+// }
 // import WelcomeScreen from "../screens/WelcomeScreen";
 const Stack = createNativeStackNavigator();
 
@@ -35,18 +36,24 @@ const AppNavigation = () => {
           component={SignUpScreen}
         />
 
-        {/* <Stack.Screen
+        <Stack.Screen
           options={{ headerShown: false }}
           name="Profile"
           component={Profile}
-        /> */}
+        />
 
-        {/* <Stack.Screen
+        <Stack.Screen
           options={{ headerShown: false }}
           name="Home"
           component={HomeScreen}
-        /> */}
-        <Stack.Screen name="main" component={MyTabs} />
+        />
+
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="DetailsScreen"
+          component={DetailsScreen}
+        />
+        {/* <Stack.Screen name="main" component={MyTabs} /> */}
       </Stack.Navigator>
     </NavigationContainer>
   );

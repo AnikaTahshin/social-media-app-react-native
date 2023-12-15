@@ -6,11 +6,11 @@ export const FirebaseProvider = FirebaseContext.Provider;
 
 export const FirebaseConsumer = FirebaseContext.Consumer;
 
-export const withFirebaseHOC = (Component) => (props) =>
+export const withFirebaseHOC = (SignUpScreen) => (props) =>
   (
     <FirebaseConsumer>
-      {(state) => <Component {...props} firebase={state} />}
+      {(state) => <SignUpScreen {...props} firebase={state} />}
     </FirebaseConsumer>
   );
 
-export default withFirebaseHOC(SignUpScreen);
+// export default withFirebaseHOC(SignUpScreen);
