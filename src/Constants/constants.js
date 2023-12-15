@@ -1,0 +1,10 @@
+export default constants = {
+  API_KEY: "AIzaSyBV3psgA8aORP3raHhrtfI1CemdbdX4100",
+  AUTH_DOMAIN: "fir-auth-8e4d0.firebaseapp.com",
+  PROJECT_ID: "fir-auth-8e4d0",
+
+  STORAGE_BUCKET: "fir-auth-8e4d0.appspot.com",
+
+  MESSAGING_SENDER_ID: "518506692258",
+  APP_ID: "1:518506692258:web:d23618a0c74f301eb5a1fb",
+};
