@@ -22,49 +22,31 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
-import { withFirebaseHOC } from "../config/Firebase";
 const SignUpScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const navigation = useNavigation();
-  const handleOnSignup = async (values) => {
-    const { name, email, password } = values;
+  const handleSignUp = () => {
+    if (!email) {
+      Toast.show("Email is empty");
+    } else if (!password) {
+      Toast.show("Password is empty");
+    } else if (!confirmPassword) {
+      Toast.show("Password is empty");
+    } else if (password !== confirmPassword) {
+      Toast.show("Password did not match");
+    } else {
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredentials) => {
+          const user = userCredentials.user;
+          console.log("Signed in", user.email);
 
-    try {
-      const response = await firebase.createUserWithEmailAndPassword(
-        email,
-        password
-      );
-      if (response.user.uid) {
-        const { uid } = response.user;
-        const userData = { email, name, uid };
-        await firebase.createNewUser(userData);
-        navigation.navigate("App");
-      }
-    } catch (error) {
-      console.error(error);
+          navigation.navigate("Login", { screen: "Login" });
+        })
+        .catch((error) => alert(error.message));
     }
-
-    // if (!email) {
-    //   Toast.show("Email is empty");
-    // } else if (!password) {
-    //   Toast.show("Password is empty");
-    // } else if (!confirmPassword) {
-    //   Toast.show("Password is empty");
-    // } else if (password !== confirmPassword) {
-    //   Toast.show("Password did not match");
-    // } else {
-    //   createUserWithEmailAndPassword(auth, email, password)
-    //     .then((userCredentials) => {
-    //       const user = userCredentials.user;
-    //       console.log("Signed in", user.email);
-
-    //       navigation.navigate("Login", { screen: "Login" });
-    //     })
-    //     .catch((error) => alert(error.message));
-    // }
   };
   return (
     <SafeAreaView style={styles.container}>
@@ -101,7 +83,7 @@ const SignUpScreen = () => {
             />
 
             <View style={styles.buttonContainer}>
-              <TouchableOpacity onPress={(values) => handleOnSignup(values)}>
+              <TouchableOpacity onPress={handleSignUp}>
                 <Text>Register</Text>
               </TouchableOpacity>
             </View>
